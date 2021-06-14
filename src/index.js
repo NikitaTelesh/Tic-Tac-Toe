@@ -1,14 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import * as Logic from './computerAlgorithms.js';
-import {ReactComponent as ManSVG} from './man.svg';
-import {ReactComponent as ComputerSVG} from './computer.svg';
+import * as GameAlgorithmService from './computerAlgorithms.js';
+import {Board} from './Components/Board.jsx';
+import {GameModeBtm} from './Components/GameModeBtn.jsx'
+import {FirstStepRight} from './Components/FirstStepRight.jsx'
 
 class Game extends React.Component {
   constructor(props) {
     super(props);
-    this.state = JSON.parse(localStorage.getItem('state')) || {
+    this.state = {
       history: [{
         squares: Array(9).fill(null),
         moveRow: null,
@@ -22,21 +23,25 @@ class Game extends React.Component {
     }
   }
 
-  squareOnClick(i) {
+  componentDidMount(){
+    const localStorageState = JSON.parse(localStorage.getItem('state'));
+    if (localStorageState) {
+      this.setState(localStorageState);
+    }
+  }
+
+  squareOnClick = (i) => {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
     let squares = current.squares.slice();
 
-    if (Logic.calculateWinner(squares) || squares[i]) {
-
+    if (GameAlgorithmService.calculateWinner(squares) || squares[i]) {
       return;
     }
 
-    this.unboldMovesBtns();
-
     squares[i] = this.state.xIsNext ? 'X' : 'O';
 
-    if (this.state.playWithComputer && !Logic.calculateWinner(squares) && !Logic.calculateDraw(squares)) {
+    if (this.state.playWithComputer && !GameAlgorithmService.calculateWinner(squares) && !GameAlgorithmService.calculateDraw(squares)) {
       squares = this.computerMove(squares);
     }
 
@@ -48,7 +53,7 @@ class Game extends React.Component {
 
     this.setState({
       history: history.concat([{
-        squares: squares,
+        squares,
         moveRow: Math.ceil((i+1)/3),
         moveCol: (i+1)%3 || 3,
       }]),
@@ -63,25 +68,25 @@ class Game extends React.Component {
 
     if (playerGoesFirst) {
       if (stepNumber === 0) {
-        squareNumber = Logic.firstStepAlgorithm(squares, playerGoesFirst);
-      } else if (Logic.findRepetitionsAlgorithm(squares, playerGoesFirst) !== null) {
-        squareNumber = Logic.findRepetitionsAlgorithm(squares, playerGoesFirst);
+        squareNumber = GameAlgorithmService.firstStepAlgorithm(squares, playerGoesFirst);
+      } else if (GameAlgorithmService.findRepetitionsAlgorithm(squares, playerGoesFirst) !== null) {
+        squareNumber = GameAlgorithmService.findRepetitionsAlgorithm(squares, playerGoesFirst);
       } else if (stepNumber === 1) {
-        squareNumber = Logic.secondStepAlgorithm(squares, playerGoesFirst);
+        squareNumber = GameAlgorithmService.secondStepAlgorithm(squares, playerGoesFirst);
       } else {
-        squareNumber = Logic.getRandomPosition(squares);
+        squareNumber = GameAlgorithmService.getRandomPosition(squares);
       }
     }
 
     if (!playerGoesFirst) {
       if (stepNumber === 0) {
-        squareNumber = Logic.secondStepAlgorithm(squares, playerGoesFirst);
-      } else if (Logic.findRepetitionsAlgorithm(squares, playerGoesFirst) !== null) {
-        squareNumber = Logic.findRepetitionsAlgorithm(squares, playerGoesFirst);
+        squareNumber = GameAlgorithmService.secondStepAlgorithm(squares, playerGoesFirst);
+      } else if (GameAlgorithmService.findRepetitionsAlgorithm(squares, playerGoesFirst) !== null) {
+        squareNumber = GameAlgorithmService.findRepetitionsAlgorithm(squares, playerGoesFirst);
       } else if (stepNumber === 1) {
-        squareNumber = Logic.getAnglePositionOnFriendlyLine(squares);
+        squareNumber = GameAlgorithmService.getAnglePositionOnFriendlyLine(squares);
       } else {
-        squareNumber = Logic.getRandomPosition(squares);
+        squareNumber = GameAlgorithmService.getRandomPosition(squares);
       }
     }
 
@@ -89,64 +94,18 @@ class Game extends React.Component {
     return squares;
   }
 
-  movesHandleClick(move, e) {
-    this.jumpTo(move);
-    this.unboldMovesBtns();
-
-    const btn = e.target;
-    btn.classList.add('active');
-  }
-
-  jumpTo(step) {
-    this.setState({
-      stepNumber: step,
-    })
-
-    if (!this.state.playWithComputer) {
-      this.setState({
-        xIsNext: (step % 2) === 0,
-      })
-    }
-  }
-
-  unboldMovesBtns(){
-    const allBtns = document.querySelectorAll('.game-list button');
-    allBtns.forEach(item => item.classList.remove('active'));
-  }
-
-  resetState(){
-    this.setState({
-      history: [{
-        squares: Array(9).fill(null),
-        moveRow: null,
-        moveCol: null,
-      }],
-      stepNumber: 0,
-      xIsNext: true,
-      playerGoesFirst: true,
-    })
-  }
-
-  saveToLocalStorage(){
-    const localState = JSON.stringify(this.state);
-    localStorage.setItem('state', localState);
-  }
-
-  render() {
-    const history = this.state.history;
-    const current = history[this.state.stepNumber];
-    const draw = Logic.calculateDraw(current.squares);
-
-    const winnerData = Logic.calculateWinner(current.squares);
-    let [winnerMark, winnerLine] = winnerData || [null, null];
-
+  createMoves(history){
     let moves = history.map((step, move) => {
       if(move) {
         const desc = `Go to move #${move}: row(${step.moveRow}) col(${step.moveCol})`;
 
+        const handleClick = () => {
+          this.jumpTo(move);
+        }
+
         return (
           <li key={move}>
-            <button onClick={(e) => this.movesHandleClick(move, e)}>{desc}</button>
+            <button onClick={handleClick} className={this.state.stepNumber === move ? 'active' : ''}>{desc}</button>
           </li>
         );
       }
@@ -158,23 +117,112 @@ class Game extends React.Component {
       moves = moves.reverse();
     }
 
-    let status;
+    return moves;
+  }
+
+  reverseMoves = () => {
+    this.setState({reverseListOfMoves: !this.state.reverseListOfMoves});
+  }
+
+  getStatus(winnerMark, draw){
     if (winnerMark) {
-      status = 'Winner: ' + winnerMark;
+      return `Winner: ${winnerMark}`;
     } else if (draw) {
-      status = 'A draw!';
+      return 'A draw!';
     } else {
-      status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+      return `Next player: ${this.state.xIsNext ? 'X' : 'O'}`;
+    }
+  }
+
+  jumpTo(stepNumber) {
+    this.setState({
+      stepNumber,
+    });
+
+    if (!this.state.playWithComputer) {
+      this.setState({
+        xIsNext: (stepNumber % 2) === 0,
+      })
+    }
+  }
+
+  modeBtnOnClick = () => {
+    this.resetState();
+    if (!this.state.stepNumber) {
+      this.setState({playWithComputer: !this.state.playWithComputer});
+    }
+  }
+
+  manFirst = () => {
+    this.resetState();
+    this.setState({
+      playerGoesFirst: true,
+      xIsNext: true,
+    });
+  }
+
+  computerFirst = () => {
+    this.resetState();
+
+    const squares = this.resetSquares();
+    const squareNumber = GameAlgorithmService.firstStepAlgorithm(squares, false);
+    squares[squareNumber] = 'X';
+
+    this.setState({
+      history: [{
+        squares,
+      }],
+      playerGoesFirst: false,
+      xIsNext: false,
+    });
+  }
+
+  resetSquares(){
+    return Array(9).fill(null);
+  }
+
+  resetState = () => {
+    this.setState({
+      history: [{
+        squares: Array(9).fill(null),
+        moveRow: null,
+        moveCol: null,
+      }],
+      stepNumber: 0,
+      xIsNext: true,
+      playerGoesFirst: true,
+    });
+  }
+
+  saveToLocalStorage(){
+    const localState = JSON.stringify(this.state);
+    localStorage.setItem('state', localState);
+  }
+
+  componentDidUpdate() {
+    this.saveToLocalStorage();
+  }
+
+  render() {
+    const history = this.state.history;
+    const current = history[this.state.stepNumber];
+    const draw = GameAlgorithmService.calculateDraw(current.squares);
+
+    const winnerData = GameAlgorithmService.calculateWinner(current.squares);
+    let winnerMark, winnerLine;
+    if (winnerData) {
+      [winnerMark, winnerLine] = winnerData;
     }
 
-    this.saveToLocalStorage();
+    const moves = this.createMoves(history);
+    const status = this.getStatus(winnerMark, draw);
 
     return (
       <div className="game">
         <div className="game-board">
           <Board
             squares={current.squares}
-            onClick={(i) => this.squareOnClick(i)}
+            onClick={this.squareOnClick}
             winnerLine={winnerLine}
           />
         </div>
@@ -183,54 +231,23 @@ class Game extends React.Component {
           <GameModeBtm
             active={!this.state.stepNumber ? 'active' : ''}
             text={this.state.playWithComputer ? 'friend' : 'computer'}
-            onClick={() => {
-              if (!this.state.stepNumber) {
-                this.setState({playWithComputer: !this.state.playWithComputer})}
-              }
-            }
+            onClick={this.modeBtnOnClick}
           />
           <FirstStepRight
             lock={!this.state.stepNumber ? '' : 'lock'}
             hide={this.state.playWithComputer ? '' : 'hide'}
-            manFirst={() => {
-              this.resetState();
-              this.setState({
-                playerGoesFirst: true,
-                xIsNext: true,
-              })
-            }}
-            computerFirst={() => {
-              this.resetState();
-
-              const squares = Array(9).fill(null);
-              const squareNumber = Logic.firstStepAlgorithm(squares, false);
-              squares[squareNumber] = 'X';
-              this.setState({
-                history: [{
-                  squares: squares,
-                }],
-                playerGoesFirst: false,
-                xIsNext: false,
-              });
-            }}
+            manFirst={this.manFirst}
+            computerFirst={this.computerFirst}
+            playerGoesFirst={this.state.playerGoesFirst}
           />
           <button
             className={`game-restart ${!this.state.stepNumber ? 'hide' : ''}`}
-            onClick={(e) => {
-                this.resetState();
-
-                const btn = document.querySelector('.game-mode');
-                btn.classList.add('active');
-
-                const firstStepBtns = document.querySelectorAll('.first-step button');
-                firstStepBtns.forEach(btn => btn.classList.remove('active'));
-              }
-            }
+            onClick={this.resetState}
           >Start new game
           </button>
           <button
             className={`game-reverse ${!this.state.stepNumber ? 'hide' : ''}`}
-            onClick={() => this.setState({reverseListOfMoves: !this.state.reverseListOfMoves})}
+            onClick={this.reverseMoves}
           >Reverse list
           </button>
           <ol className={`game-list ${!this.state.stepNumber ? 'hide' : ''}`}>
@@ -255,108 +272,6 @@ class Game extends React.Component {
       </div>
     );
   }
-}
-
-class Board extends React.Component {
-  renderSquare(i, className) {
-    return (
-      <Square
-        className={className || 'square'}
-        value={this.props.squares[i]}
-        onClick={() => this.props.onClick(i)}
-        key={i}
-      />
-    )
-  }
-
-  render() {
-    let squares = [];
-    let rows = [];
-
-    for (let i = 0; i < 9; i++){
-      let className = 'square';
-
-      const winnerLine = this.props.winnerLine;
-      if (winnerLine && winnerLine.includes(i)) {
-        className = 'square square-win';
-      }
-
-      squares.push(this.renderSquare(i, className));
-    }
-
-    for (let i = 0; i < 3; i++){
-      rows.push(squares.slice(i*3, i*3+3))
-    }
-
-    return (
-      <div className="board-container">
-        <div className="board-row">
-          {rows[0]}
-        </div>
-        <div className="board-row">
-          {rows[1]}
-        </div>
-        <div className="board-row">
-          {rows[2]}
-        </div>
-      </div>
-    );
-  }
-}
-
-function GameModeBtm(props){
-  return (
-    <button
-      className={`game-mode ${props.active}`}
-      onClick={() => {
-          props.onClick();
-        }
-      }
-    >Click to play with {props.text}
-    </button>
-  )
-}
-
-function FirstStepRight(props){
-  return (
-    <div className={`first-step ${props.hide} ${props.lock}`}>
-      <h3 className="first-step__title">
-        Who will go first?
-      </h3>
-      <div className="first-step__btns">
-        <button
-          className="first-step__man-btn"
-          onClick={(e) => {
-              props.manFirst();
-              e.currentTarget.classList.add('active');
-              e.currentTarget.nextElementSibling.classList.remove('active');
-            }
-          }
-        >
-          <ManSVG />
-        </button>
-        <button
-          className="first-step__computer-btn"
-          onClick={(e) => {
-              props.computerFirst();
-              e.currentTarget.classList.add('active');
-              e.currentTarget.previousElementSibling.classList.remove('active');
-            }
-          }
-        >
-          <ComputerSVG />
-        </button>
-      </div>
-    </div>
-  )
-}
-
-function Square(props){
-  return (
-    <button className={props.className} onClick={props.onClick}>
-      {props.value}
-    </button>
-  );
 }
 
 // ========================================

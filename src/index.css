@@ -1,5 +1,13 @@
 :root{
-  --box-shadow: rgba(5, 247, 255, .5);
+  --square-shadow-color: rgba(5, 247, 255, .5);
+  --right-and-bottom-square-shadow: 8px 0px 4px -4px var(--square-shadow-color),
+                                    0px 8px 4px -4px var(--square-shadow-color),
+                                    inset -6px -6px 4px -4px var(--square-shadow-color);
+  --bottom-square-shadow: 0px 8px 4px -4px var(--square-shadow-color),
+                          inset 0px -6px 4px -4px var(--square-shadow-color);
+  --right-square-shadow: 8px 0px 4px -4px var(--square-shadow-color),
+                         inset -6px 0px 4px -4px var(--square-shadow-color);
+  --adaptive-square-sides: calc(50px + 100 * ((100vw - 320px) / 480));
 }
 
 body {
@@ -50,55 +58,43 @@ ol, ul {
 .board-row:first-child .square:first-child {
   border-left: none;
   border-top: none;
-  box-shadow: 8px 0px 4px -4px var(--box-shadow),
-              0px 8px 4px -4px var(--box-shadow),
-              inset -6px -6px 4px -4px var(--box-shadow);
+  box-shadow: var(--right-and-bottom-square-shadow);
 }
 
 .board-row:first-child .square:nth-child(2) {
   border-top: none;
-  box-shadow: 8px 0px 4px -4px var(--box-shadow),
-              0px 8px 4px -4px var(--box-shadow),
-              inset -6px -6px 4px -4px var(--box-shadow);
+  box-shadow: var(--right-and-bottom-square-shadow);
 }
 
 .board-row:first-child .square:last-child {
   border-right: none;
   border-top: none;
-  box-shadow: 0px 8px 4px -4px var(--box-shadow),
-              inset 0px -6px 4px -4px var(--box-shadow);
+  box-shadow: var(--bottom-square-shadow);
 }
 
 .board-row:nth-child(2) .square:first-child {
   border-left: none;
-  box-shadow: 8px 0px 4px -4px var(--box-shadow),
-              0px 8px 4px -4px var(--box-shadow),
-              inset -6px -6px 4px -4px var(--box-shadow);
+  box-shadow: var(--right-and-bottom-square-shadow);
 }
 
 .board-row:nth-child(2) .square:nth-child(2) {
-  box-shadow: 8px 0px 4px -4px var(--box-shadow),
-              0px 8px 4px -4px var(--box-shadow),
-              inset -6px -6px 4px -4px var(--box-shadow);
+  box-shadow: var(--right-and-bottom-square-shadow);
 }
 
 .board-row:nth-child(2) .square:last-child {
   border-right: none;
-  box-shadow: 0px 8px 4px -4px var(--box-shadow),
-              inset 0px -6px 4px -4px var(--box-shadow);
+  box-shadow: var(--bottom-square-shadow);
 }
 
 .board-row:last-child .square:first-child {
   border-left: none;
   border-bottom: none;
-  box-shadow: 8px 0px 4px -4px var(--box-shadow),
-              inset -6px 0px 4px -4px var(--box-shadow);
+  box-shadow: var(--right-square-shadow);
 }
 
 .board-row:last-child .square:nth-child(2) {
   border-bottom: none;
-  box-shadow: 8px 0px 4px -4px var(--box-shadow),
-              inset -6px 0px 4px -4px var(--box-shadow);
+  box-shadow: var(--right-square-shadow);
 }
 
 .board-row:last-child .square:last-child {
@@ -312,8 +308,8 @@ ol, ul {
 
 @media (max-width: 800px) {
   .square {
-    width: calc(50px + 100 * ((100vw - 320px) / 480));
-    height: calc(50px + 100 * ((100vw - 320px) / 480));
+    width: var(--adaptive-square-sides);
+    height: var(--adaptive-square-sides);
     font-size: calc(32px + 68 * ((100vw - 320px) / 480));
   }
 
