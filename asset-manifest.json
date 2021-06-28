@@ -1,23 +1,23 @@
 {
   "files": {
-    "main.css": "/Tick-Tack-Toe/static/css/main.e69ffad6.chunk.css",
-    "main.js": "/Tick-Tack-Toe/static/js/main.8b4f4e93.chunk.js",
-    "main.js.map": "/Tick-Tack-Toe/static/js/main.8b4f4e93.chunk.js.map",
-    "runtime-main.js": "/Tick-Tack-Toe/static/js/runtime-main.55b9576e.js",
-    "runtime-main.js.map": "/Tick-Tack-Toe/static/js/runtime-main.55b9576e.js.map",
-    "static/js/2.ee2eb9c1.chunk.js": "/Tick-Tack-Toe/static/js/2.ee2eb9c1.chunk.js",
-    "static/js/2.ee2eb9c1.chunk.js.map": "/Tick-Tack-Toe/static/js/2.ee2eb9c1.chunk.js.map",
-    "index.html": "/Tick-Tack-Toe/index.html",
-    "static/css/main.e69ffad6.chunk.css.map": "/Tick-Tack-Toe/static/css/main.e69ffad6.chunk.css.map",
-    "static/js/2.ee2eb9c1.chunk.js.LICENSE.txt": "/Tick-Tack-Toe/static/js/2.ee2eb9c1.chunk.js.LICENSE.txt",
-    "static/media/index.css": "/Tick-Tack-Toe/static/media/background.d79ffdb7.jpg",
-    "static/media/computer.75fc730c.svg": "/Tick-Tack-Toe/static/media/computer.75fc730c.svg",
-    "static/media/man.74121e47.svg": "/Tick-Tack-Toe/static/media/man.74121e47.svg"
+    "main.css": "/Tic-Tac-Toe/static/css/main.5089f83d.chunk.css",
+    "main.js": "/Tic-Tac-Toe/static/js/main.f158d6a0.chunk.js",
+    "main.js.map": "/Tic-Tac-Toe/static/js/main.f158d6a0.chunk.js.map",
+    "runtime-main.js": "/Tic-Tac-Toe/static/js/runtime-main.839a9bff.js",
+    "runtime-main.js.map": "/Tic-Tac-Toe/static/js/runtime-main.839a9bff.js.map",
+    "static/js/2.ee2eb9c1.chunk.js": "/Tic-Tac-Toe/static/js/2.ee2eb9c1.chunk.js",
+    "static/js/2.ee2eb9c1.chunk.js.map": "/Tic-Tac-Toe/static/js/2.ee2eb9c1.chunk.js.map",
+    "index.html": "/Tic-Tac-Toe/index.html",
+    "static/css/main.5089f83d.chunk.css.map": "/Tic-Tac-Toe/static/css/main.5089f83d.chunk.css.map",
+    "static/js/2.ee2eb9c1.chunk.js.LICENSE.txt": "/Tic-Tac-Toe/static/js/2.ee2eb9c1.chunk.js.LICENSE.txt",
+    "static/media/index.css": "/Tic-Tac-Toe/static/media/background.d79ffdb7.jpg",
+    "static/media/computer.75fc730c.svg": "/Tic-Tac-Toe/static/media/computer.75fc730c.svg",
+    "static/media/man.74121e47.svg": "/Tic-Tac-Toe/static/media/man.74121e47.svg"
   },
   "entrypoints": [
-    "static/js/runtime-main.55b9576e.js",
+    "static/js/runtime-main.839a9bff.js",
     "static/js/2.ee2eb9c1.chunk.js",
-    "static/css/main.e69ffad6.chunk.css",
-    "static/js/main.8b4f4e93.chunk.js"
+    "static/css/main.5089f83d.chunk.css",
+    "static/js/main.f158d6a0.chunk.js"
   ]
 }
